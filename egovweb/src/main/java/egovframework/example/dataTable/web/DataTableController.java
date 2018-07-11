@@ -7,15 +7,22 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import egovframework.example.dataTable.service.DataTableService;
+
 @Controller
 public class DataTableController {
 
+	@Resource(name = "dataTableService")
+	private DataTableService dataTableService;
+	
+	
 	
 	@RequestMapping(value = "/dataTable.do")
 	 public String dataTable() throws Exception 
@@ -34,7 +41,7 @@ public class DataTableController {
 		 Map<String, Object> mapSearch = new HashMap<String, Object>();
 		 
 		 //검색 결과 보관을 위한
-		 List listDate = new ArrayList();
+		 List listData = new ArrayList();
 		 //검색 결과 보관을 위한
 		
 		
@@ -42,8 +49,8 @@ public class DataTableController {
 		 List<String> listColumns = new ArrayList<String>();
 		 for(int i=0; ;i++)
 		 {
-			 String colName = req.getParameter("columns["+i+"][date]");
-			 if (colName != null || colName.length() > 0)
+			 String colName = req.getParameter("columns["+i+"][data]");
+			 if (colName != null && colName.length() > 0)
 			 {
 				 listColumns.add(colName);
 			 }
@@ -61,10 +68,29 @@ public class DataTableController {
 		 String sOrderDir = req.getParameter("order[0][dir]");
 		 String sSearch = req.getParameter("search[value]");
 		 
+		int nStart = 01;
+		int nLength = 10;
+		
+		try{
+			nStart = Integer.parseInt(sStart);
+			
+		}
+		catch(NumberFormatException e){}
+		
+		try{
+			nLength = Integer.parseInt(sLength);
+			
+		}
+		catch(NumberFormatException e){}
+		
+			
+		
+		
 		
 		 //검색컬럼명
 		 int nOrderColumn = 0;
 		 String sOrderColumnName = null;
+		 
 		 try{
 			 nOrderColumn = Integer.parseInt(sOrderColumn);
 		 }
@@ -81,8 +107,8 @@ public class DataTableController {
 		 
 		 //검색 데이터 구성
 		 mapSearch.put("sTable", sTable);
-		 mapSearch.put("sStart", sStart);
-		 mapSearch.put("sLength", sLength);
+		 mapSearch.put("nStart", nStart);
+		 mapSearch.put("nLength", nLength);
 		 mapSearch.put("sSearch", sSearch);
 		 mapSearch.put("sOrderDir", sOrderDir);
 		 mapSearch.put("sOrderColumnName", sOrderColumnName);
@@ -90,19 +116,18 @@ public class DataTableController {
 		 
 		 
 		 // 데이터 검색 처리
-		 
+		 listData = dataTableService.ajax(mapSearch);
 		 //전체 데이터 개수 처리
+		 int nRecordTotal = dataTableService.ajaxTotCnt(mapSearch);
 		 
 		 //임시 - 파라메터 출력
-		 
+		 dispParams(req);
 		
-		dispParams(req);
-		
-		
-		mapReturn.put("draw", 1);
-		mapReturn.put("recordsTotal", 0);
-		mapReturn.put("recordsFiltered",0);
-		mapReturn.put("date",listDate);
+		//변환 데이터 구성
+		mapReturn.put("draw", sDraw);
+		mapReturn.put("recordsTotal", nRecordTotal);
+		mapReturn.put("recordsFiltered",nRecordTotal);
+		mapReturn.put("data",listData);
 		
 		
 	

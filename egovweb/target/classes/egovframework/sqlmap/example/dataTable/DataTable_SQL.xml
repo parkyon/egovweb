@@ -5,24 +5,41 @@
 
 	
 	
-	<select id="dataTableDAO.ajax" parameterClass="java.util.Map" resultClass="java.util.Map">
+	<select id="dataTableDAO.ajax" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
 
 			SELECT
 				
-				<iterate conjunction=",">
-				#listColumns[]#
+				<iterate property="listColumns" conjunction=",">
+				$listColumns[]$
 				</iterate>
 				
 				
-			FROM #sTable#
+			FROM $sTable$
+			WHERE 1=1
+			<isNotEmpty prepend="AND" property="sSearch">
+				NAME LIKE concat('%' , #sSearch# , '%')
+			</isNotEmpty>
+			
+			ORDER BY $sOrderColumnName$ $sOrderDir$
+			LIMIT #nLength# OFFSET #nStart#		
+	</select>
+	
+	
+	
+	<select id="dataTableDAO.ajaxTotCnt" parameterClass="java.util.HashMap" resultClass="int">
+
+
+		SELECT 
+			COUNT(*) totcnt
+			FROM $sTable$
 			WHERE 1=1
 			<isNotEmpty prepend="AND" property="sSearch">
 				NAME LIKE '%' || #sSearch# || '%'
 			</isNotEmpty>
 			
-			ORDER BY #sOrderColumnName# #sOrderDir#
-			LIMIT #sLength# OFFSET #sStart#		
+
 	</select>
+	
 	
 	
 
