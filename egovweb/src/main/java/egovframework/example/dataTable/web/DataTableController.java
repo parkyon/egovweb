@@ -61,7 +61,7 @@ public class DataTableController {
 		 }
 		 //기타 데이터 수집
 		 String sDraw = req.getParameter("draw");
-		 String sLength = req.getParameter("lengt");
+		 String sLength = req.getParameter("length");
 		 String sStart = req.getParameter("start");
 		 String sTable = req.getParameter("table");
 		 String sOrderColumn = req.getParameter("order[0][column]");

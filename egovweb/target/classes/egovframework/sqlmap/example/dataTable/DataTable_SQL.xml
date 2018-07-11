@@ -34,7 +34,7 @@
 			FROM $sTable$
 			WHERE 1=1
 			<isNotEmpty prepend="AND" property="sSearch">
-				NAME LIKE '%' || #sSearch# || '%'
+				NAME LIKE concat('%' , #sSearch# , '%')
 			</isNotEmpty>
 			
 
