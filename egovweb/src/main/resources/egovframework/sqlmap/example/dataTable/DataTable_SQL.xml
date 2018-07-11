@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DataTable">
+
+	
+	
+	<select id="dataTableDAO.ajax" parameterClass="java.util.Map" resultClass="java.util.Map">
+
+			SELECT
+				
+				<iterate conjunction=",">
+				#listColumns[]#
+				</iterate>
+				
+				
+			FROM #sTable#
+			WHERE 1=1
+			<isNotEmpty prepend="AND" property="sSearch">
+				NAME LIKE '%' || #sSearch# || '%'
+			</isNotEmpty>
+			
+			ORDER BY #sOrderColumnName# #sOrderDir#
+			LIMIT #sLength# OFFSET #sStart#		
+	</select>
+	
+	
+
+</sqlMap>
